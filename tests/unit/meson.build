@@ -25,6 +25,10 @@ testunit_unit_sources = files('''
     sbi-message-test.c
     security-test.c
     crash-test.c
+    compare-ue-info-mme-test.c
+    compare-ue-info-sgwc-test.c
+    compare-ue-info-smf-test.c
+
 '''.split())
 
 testunit_unit_exe = executable('unit',
