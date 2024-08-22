@@ -580,6 +580,8 @@ int nas_5gs_send_security_mode_command(amf_ue_t *amf_ue)
     ogs_timer_start(amf_ue->t3560.timer,
             amf_timer_cfg(AMF_TIMER_T3560)->duration);
 
+    amf_metrics_inst_global_inc(AMF_METR_GLOB_CTR_AMF_SECURITY_COMMAND);
+    
     rv = nas_5gs_send_to_downlink_nas_transport(ran_ue, gmmbuf);
     ogs_expect(rv == OGS_OK);
 

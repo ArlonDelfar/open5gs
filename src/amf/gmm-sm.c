@@ -2077,6 +2077,7 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
             } else {
                 amf_ue->t3560.retry_count++;
                 r = nas_5gs_send_security_mode_command(amf_ue);
+                //INCREMENT COUNTER SECURITY MODE REQ proposition 1
                 ogs_expect(r == OGS_OK);
                 ogs_assert(r != OGS_ERROR);
             }
