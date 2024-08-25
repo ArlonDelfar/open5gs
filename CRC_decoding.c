@@ -1,9 +1,13 @@
+#include <stdio.h>
+
 #include "CRC_decoding.h"
 #include "CRC_start.h"
 
 int signal_code_control;
 
 void signal_decode(int array_CRC[], int array_signal[], int array_signal_out[], int size_array_CRC, int size_array_signal, int size_array_signal_out) {
+
+    FILE* outputFile = fopen("CRC_report.out", "a");
 
     for(int j=0; j<size_array_signal+1; j++){
         if(array_signal_out[j]==1){
@@ -19,11 +23,11 @@ void signal_decode(int array_CRC[], int array_signal[], int array_signal_out[], 
         }
     }
 
-    printf("\npartial data from CRC_decoding.c");
-    parts_control_print(array_CRC, array_signal, array_signal_out, size_array_CRC, size_array_signal, size_array_signal_out);
+    fprintf(outputFile, "\npartial data from CRC_decoding");
+    report_file(array_CRC, array_signal, array_signal_out, size_array_CRC, size_array_signal, size_array_signal_out, outputFile);
 
-    if(signal_code_control == 0) printf("\ncorrect signal\n");
-    if(signal_code_control == 1) printf("\nincorrect signal\n");
+    if(signal_code_control == 0) fprintf(outputFile, "\ncorrect signal\n\n");
+    if(signal_code_control == 1) fprintf(outputFile, "\nincorrect signal\n\n");
 
 }
 
