@@ -1,11 +1,7 @@
-#include <stdio.h>
-
 #include "CRC_encoding.h"
 #include "CRC_start.h"
 
 void signal_encode(int array_CRC[], int array_signal[], int array_signal_out[], int size_array_CRC, int size_array_signal, int size_array_signal_out){
-
-    FILE* outputFile = fopen("CRC_report.out", "a");
 
     for(int j=0; j<size_array_signal; j++){
         array_signal_out[j]=array_signal[j];
@@ -23,8 +19,8 @@ void signal_encode(int array_CRC[], int array_signal[], int array_signal_out[], 
             array_signal_out[j]=array_signal[j];
     }
 
-    fprintf(outputFile, "\npartial data from CRC_encoding");
-    report_file(array_CRC, array_signal, array_signal_out, size_array_CRC, size_array_signal, size_array_signal_out, outputFile);
+    printf("\npartial data from CRC_encoding.c");
+    parts_control_print(array_CRC, array_signal, array_signal_out, size_array_CRC, size_array_signal, size_array_signal_out);
 
     signal_decode(array_CRC, array_signal, array_signal_out, size_array_CRC, size_array_signal, size_array_signal_out);
 }
