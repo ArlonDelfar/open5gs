@@ -1439,7 +1439,40 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e,
             break;
 
         case OGS_NAS_5GS_IDENTITY_RESPONSE:
-              //TODO
+            if (amf_ue->nas.message_type == 0) {
+                ogs_error("INVALID NAS MESSAGE TYPE");
+                OGS_FSM_TRAN(s, gmm_state_exception);
+                break;
+            }
+
+            CLEAR_AMF_UE_TIMER(amf_ue->t3570);
+
+            gmm_cause = gmm_handle_identity_response(amf_ue, &nas_message->gmm.identity_response);
+            if (gmm_cause != OGS_5GMM_CAUSE_REQUEST_ACCEPTED) {
+                ogs_error("[%s] gmm_handle_identity_response() failed [%d]",amf_ue->suci, gmm_cause);
+                r = nas_5gs_send_service_reject(ran_ue, amf_ue, gmm_cause);
+                ogs_expect(r == OGS_OK);
+                ogs_assert(r != OGS_ERROR);
+                OGS_FSM_TRAN(s, gmm_state_exception);
+                break;
+            }
+
+            if (!AMF_UE_HAVE_SUCI(amf_ue)) {
+                ogs_info("SUCI not found");
+                r = nas_5gs_send_service_reject(ran_ue, amf_ue, gmm_cause);
+                ogs_expect(r == OGS_OK);
+                ogs_assert(r != OGS_ERROR);
+                OGS_FSM_TRAN(s, gmm_state_exception);
+                break;
+            }
+
+            amf_sbi_send_release_all_sessions(ran_ue, amf_ue, AMF_RELEASE_SM_CONTEXT_NO_STATE);
+            if (!AMF_SESSION_RELEASE_PENDING(amf_ue) && amf_sess_xact_count(amf_ue) == xact_count) {
+                r = amf_ue_sbi_discover_and_send(OGS_SBI_SERVICE_TYPE_NAUSF_AUTH, NULL, amf_nausf_auth_build_authenticate, amf_ue, 0, NULL);
+                ogs_expect(r == OGS_OK);
+                ogs_assert(r != OGS_ERROR);
+            }
+            OGS_FSM_TRAN(s, &gmm_state_authentication);
             break;
 
         case OGS_NAS_5GS_5GMM_STATUS:
